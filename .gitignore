@@ -1,0 +1,5 @@
+*.exe
+main
+*.js
+*.json
+.vscode
