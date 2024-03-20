@@ -17,6 +17,11 @@ namespace hades
             return temp;
         }
         JsonType type() { return JsonType::Number; }
+
+        double &get_double() override
+        {
+            return data;
+        }
     };
 
     template <>

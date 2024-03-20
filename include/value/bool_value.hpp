@@ -15,6 +15,8 @@ namespace hades
             return oss.str();
         }
         JsonType type() { return JsonType::Boolean; }
+
+        bool &get_bool() { return data; }
     };
 
     template <>

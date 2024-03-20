@@ -13,6 +13,11 @@ namespace hades
             return "\"" + data + "\"";
         }
         JsonType type() { return JsonType::String; }
+
+        std::string& get_string() override
+        {
+            return data;
+        }
     };
 
     template <>
@@ -26,5 +31,5 @@ namespace hades
     {
         data.reset(new JsonValueString(val));
     }
-    
+
 }

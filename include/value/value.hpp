@@ -7,6 +7,7 @@
 #include "string"
 #include "unordered_map"
 #include "vector"
+#include <cassert>
 
 namespace hades
 {
@@ -98,6 +99,22 @@ namespace hades
                 std::cout << e.what();
             }
         }
+
+        virtual std::string& get_string()
+        {
+            throw std::runtime_error("Not a string type.");
+        }
+
+        virtual double& get_double()
+        {
+            throw std::runtime_error("Not a double type.");
+        }
+
+        virtual bool& get_bool()
+        {
+            throw std::runtime_error("Not a bool type.");
+        }
+
         virtual ~JsonValue() {}
     };
 }

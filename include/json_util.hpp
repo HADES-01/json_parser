@@ -9,7 +9,7 @@ namespace hades
 
     public:
         json();
-        
+
         template <typename T>
         json(T val)
         {
@@ -33,7 +33,11 @@ namespace hades
             return *this;
         }
 
-        json &operator[](std::string a)
+        template <typename T>
+        T& get() { throw std::runtime_error("Type not deduced."); }
+
+        json &
+        operator[](std::string a)
         {
             return data.get()[0][a];
         }
@@ -42,6 +46,7 @@ namespace hades
         {
             return data.get()[0][idx];
         }
+
         bool operator!=(json &a) { return a.data != data; }
 
         void to_file(std::string path) { data->to_file(path); }
@@ -54,4 +59,18 @@ namespace hades
             return os << j.data.get();
         }
     };
+
+    template <>
+    double& json::get()
+    {
+        return (*data).get_double();
+    }
+
+    template <>
+    bool& json::get()
+    {
+        return (*data).get_bool();
+    }
+    template <>
+    std::string& json::get() { return (*data).get_string(); }
 }
