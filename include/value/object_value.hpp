@@ -1,14 +1,30 @@
-#include "../json_util.hpp"
+/**
+ * @file include/value/object_value.hpp
+ * @brief Definition of JsonObject.
+ *
+ * ! Internal header file. Not to be used directly.
+ */
+
+#include "value.hpp"
 
 namespace hades
 {
+    /**
+     * @brief Specialization of `JsonValue` for json object data-type.
+     * @implements `JsonValue`
+     */
     class JsonObject : public JsonValue
     {
         std::unordered_map<std::string, json> data;
 
+        // @brief Overridden `JsonValue::tpye()` to provide Object type.
+        JsonType type() { return JsonType::Object; }
+
     public:
         JsonObject() {}
         JsonObject(std::unordered_map<std::string, json> val) : data(val) {}
+
+        // @brief Overridden `JsonValue::str()` to convert json object to string
         std::string str(int indent) override
         {
             std::ostringstream oss;
@@ -32,6 +48,8 @@ namespace hades
             oss << "}";
             return oss.str();
         }
+
+        // @brief Overridden `JsonValue::describe()` to provide overview of the json object
         std::string describe(int indent) override
         {
             std::ostringstream oss;
@@ -55,10 +73,8 @@ namespace hades
             oss << "}";
             return oss.str();
         }
-        void add_entry(std::string key, json value)
-        {
-            data[key] = value;
-        }
+
+        // @brief Overridden `JsonValue::operator[]` to provide object-like access.
         json &operator[](const std::string &key) override
         {
             if (data.count(key) == 0)
@@ -67,31 +83,8 @@ namespace hades
             }
             return data[key];
         }
-        JsonType type() { return JsonType::Object; }
+
+        // @brief Overidden `JsonValue::size()` to return the size of the object type
+        size_t size() override { return data.size(); }
     };
-
-    json::json()
-    {
-        data.reset(new JsonObject());
-    }
-
-    json::json(std::unordered_map<std::string, json> val)
-    {
-        auto l = new JsonObject();
-        for (auto a : val)
-        {
-            l->add_entry(a.first, a.second);
-        }
-        data.reset(l);
-    }
-
-    json::json(std::initializer_list<std::pair<std::string, json>> val)
-    {
-        auto l = new JsonObject();
-        for (auto a : val)
-        {
-            l->add_entry(a.first, a.second);
-        }
-        data.reset(l);
-    }
 }

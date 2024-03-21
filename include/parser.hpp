@@ -1,15 +1,22 @@
 #pragma once
 #include "fstream"
 #include "iostream"
-#include "json_util.hpp"
+#include "value/value.hpp"
 #include "sstream"
 #include "vector"
 
 namespace hades
 {
+    /**
+     * @brief Parses json objects from string
+     */
     class Parser
     {
         std::stringstream buffer;
+
+        /**
+         * @brief Parses a json object if the first character is {
+         */
         hades::json parse_object()
         {
             char ele;
@@ -26,7 +33,6 @@ namespace hades
                 {
                     auto parsed = parse_object();
                     obj[currKey] = parsed;
-                    // obj->add_entry(currKey, parsed);
                     break;
                 }
                 case ',':
@@ -46,7 +52,6 @@ namespace hades
                     else
                     {
                         obj[currKey] = parsed;
-                        // obj->add_entry(currKey, parsed);
                     }
                     break;
                 }
@@ -54,7 +59,6 @@ namespace hades
                 {
                     auto parsed = parse_array();
                     obj[currKey] = parsed;
-                    // obj->add_entry(currKey, parsed);
                     break;
                 }
                 default:
@@ -63,21 +67,18 @@ namespace hades
                     {
                         auto parsed = parse_float();
                         obj[currKey] = parsed;
-                        // obj->add_entry(currKey, parsed);
                     }
                     else if (ele == 't' || ele == 'f')
                     {
                         // boolean value
                         auto parsed = parse_boolean();
                         obj[currKey] = parsed;
-                        // obj->add_entry(currKey, parsed);
                     }
                     else if (ele == 'n')
                     {
                         // null value
                         buffer.seekg((int)buffer.tellg() + 4);
                         obj[currKey] = {};
-                        // obj->add_entry(currKey, {});
                     }
                     else
                     {
@@ -89,6 +90,8 @@ namespace hades
             buffer >> ele;
             return hades::json(obj);
         }
+
+        /// @brief Parses a json array if the first character is [
         hades::json parse_array()
         {
             std::vector<hades::json> arr;
@@ -103,21 +106,18 @@ namespace hades
                 {
                     auto parsed = parse_object();
                     arr.push_back(parsed);
-                    // arr->add_entry(parsed);
                     break;
                 }
                 case '[':
                 {
                     auto parsed = parse_array();
                     arr.push_back(parsed);
-                    // arr->add_entry(parsed);
                     break;
                 }
                 case '\"':
                 {
                     auto parsed = parse_string();
                     arr.push_back(parsed);
-                    // arr->add_entry(parsed);
                     break;
                 }
                 default:
@@ -126,21 +126,18 @@ namespace hades
                     {
                         auto parsed = parse_float();
                         arr.push_back(parsed);
-                        // arr->add_entry(parsed);
                     }
                     else if (ele == 't' || ele == 'f')
                     {
                         // boolean value
                         auto parsed = parse_boolean();
                         arr.push_back(parsed);
-                        // arr->add_entry(parsed);
                     }
                     else if (ele == 'n')
                     {
                         // null value
                         buffer.seekg((int)buffer.tellg() + 4);
                         arr.push_back({});
-                        // arr->add_entry({});
                     }
                     else
                     {
@@ -152,6 +149,8 @@ namespace hades
             buffer >> ele;
             return hades::json(arr);
         }
+
+        /// @brief Parses a json number if a first character is a digit
         double parse_float()
         {
             char c;
@@ -165,6 +164,8 @@ namespace hades
             buffer.seekg((int)buffer.tellg() - 1);
             return std::stod(data);
         }
+
+        /// @brief Parses a json boolean if the first character is a t or f
         bool parse_boolean()
         {
             char c;
@@ -177,6 +178,8 @@ namespace hades
             buffer.seekg((int)buffer.tellg() + 4);
             return false;
         }
+
+        /// @brief Parses a json string if the first character is "
         std::string parse_string()
         {
             char c;
@@ -192,7 +195,12 @@ namespace hades
         }
 
     public:
-        Parser(std::ifstream& ifs)
+        /**
+         * @brief Construct a new Parser object from `std::ifstream`
+         * 
+         * @throws `std::runtime_error` if the file was not opened.
+         */
+        Parser(std::ifstream &ifs)
         {
             if (!ifs.is_open())
             {
@@ -210,6 +218,10 @@ namespace hades
 
             ifs.close();
         }
+
+        /**
+         * @brief Construct a new Parser object from `std::string`
+         */
         Parser(std::string json)
         {
             for (auto a : json)
@@ -219,6 +231,8 @@ namespace hades
                 buffer << a;
             }
         }
+
+        /// @brief Starts parsing and delegates to appropriate function based on the first character.
         hades::json parse()
         {
             char ele;

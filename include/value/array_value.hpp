@@ -1,20 +1,42 @@
-#include "../json_util.hpp"
+/**
+ * @file include/value/array_value.hpp
+ * @brief Definition of JsonValueArray.
+ *
+ * ! Internal header file. Not to be used directly.
+ */
+#include "value.hpp"
 
 namespace hades
 {
+    /**
+     * @brief Specialization of `JsonValue` for json array data-type.
+     * @implements `JsonValue`
+     */
     class JsonValueArray : public JsonValue
     {
         std::vector<json> data;
 
+        // @brief Overridden `JsonValue::type()` to provide Array type.
+        JsonType type() { return JsonType::Array; }
+
     public:
         JsonValueArray() {}
         JsonValueArray(std::initializer_list<json> val) : data(val) {}
-        void add_entry(json val)
+
+        // @brief Overridden `JsonValue::push_back(json&&)` to insert a rvalue to the array.
+        void push_back(json &&val) override
         {
             data.push_back(val);
         }
 
-        std::string str(int indent) override
+        // @brief Overridden `JsonValue::push_back(json&)` to insert a value to the array.
+        void push_back(json &val) override
+        {
+            data.push_back(val);
+        }
+
+        // @brief Overridden `JsonValue::str()` to convert json array to string
+        std::string str(int indent = 0) override
         {
             std::ostringstream oss;
             oss << "[";
@@ -35,6 +57,8 @@ namespace hades
             oss << "]";
             return oss.str();
         }
+
+        // @brief Overridden `JsonValue::describe()` to provide the overview of json array
         std::string describe(int indent) override
         {
             std::ostringstream oss;
@@ -45,6 +69,8 @@ namespace hades
             oss << " ]";
             return oss.str();
         }
+
+        // @brief Overridden `JsonValue::operator[]` to provide the array-like access to json array
         json &operator[](const size_t &idx)
         {
             if (idx >= data.size() || idx < 0)
@@ -53,72 +79,8 @@ namespace hades
             }
             return data[idx];
         }
-        JsonType type() { return JsonType::Array; }
+
+        // @brief Overidden `JsonValue::size()` to return the size of the array type
+        size_t size() override { return data.size(); }
     };
-
-    json::json(std::vector<json> val)
-    {
-        auto l = new JsonValueArray();
-        for (auto a : val)
-        {
-            l->add_entry(a);
-        }
-        // data.reset(l);
-        data.reset(l);
-    }
-
-    template <>
-    json::json(std::initializer_list<std::string> val)
-    {
-        auto l = new JsonValueArray();
-        for (auto a : val)
-        {
-            l->add_entry(json(a));
-        }
-        data.reset(l);
-    }
-
-    template <>
-    json::json(std::initializer_list<char const *> val)
-    {
-        auto l = new JsonValueArray();
-        for (auto a : val)
-        {
-            l->add_entry(json(a));
-        }
-        data.reset(l);
-    }
-
-    template <>
-    json::json(std::initializer_list<bool> val)
-    {
-        auto l = new JsonValueArray();
-        for (auto a : val)
-        {
-            l->add_entry(json(a));
-        }
-        data.reset(l);
-    }
-
-    template <>
-    json::json(std::initializer_list<int> val)
-    {
-        auto l = new JsonValueArray();
-        for (auto a : val)
-        {
-            l->add_entry(json(a));
-        }
-        data.reset(l);
-    }
-
-    template <>
-    json::json(std::initializer_list<double> val)
-    {
-        auto l = new JsonValueArray();
-        for (auto a : val)
-        {
-            l->add_entry(json(a));
-        }
-        data.reset(l);
-    }
 }
