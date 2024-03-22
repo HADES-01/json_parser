@@ -145,19 +145,20 @@ namespace hades
          * @brief Writes a json value to file.
          *
          * @param path filename
+         * @returns `bool` whether `json` object written to file or not
          */
-        void to_file(std::string path)
+        bool to_file(std::string path)
         {
             try
             {
                 std::ofstream ofs(path);
                 ofs << str(0);
-                std::cout << "Written to file-" + path << "\n";
             }
             catch (std::exception &e)
             {
-                std::cout << e.what();
+                return false;
             }
+            return true;
         }
 
         /**

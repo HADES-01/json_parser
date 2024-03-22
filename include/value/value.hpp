@@ -89,8 +89,9 @@ namespace hades
          * @brief Writes a json value to file.
          *
          * @param path filename
+         * @returns `bool` whether `json` object written to file or not
          */
-        void to_file(std::string path) { data->to_file(path); }
+        bool to_file(std::string path) { return data->to_file(path); }
 
         /**
          * @brief recursively serializes the json value into a string to be written to a file or outputstream.
