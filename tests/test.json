@@ -1,0 +1,14 @@
+{
+  "string" : "World",
+  "bool": true,
+  "temp": 34.43,
+  "arr": [[12, 12, 34, 43], {"obj": {"arr":[34]}}],
+  "obj" : {
+    "hello" : "World",
+    "obj" : {
+      "hello": "World"
+    },
+    "null": null
+  },
+  "null": null
+}

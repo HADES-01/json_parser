@@ -3,3 +3,6 @@ main
 *.js
 *.json
 .vscode
+build
+
+!tests/test.json

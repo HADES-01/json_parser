@@ -1,4 +1,4 @@
-#include "include/json.h"
+#include "json.h"
 #include "iostream"
 
 int main()
@@ -21,7 +21,7 @@ int main()
     })"_json);
     std::cout << l << std::endl;
 
-    hades::json a = hades::json(std::ifstream("temp.json"));
+    hades::json a = hades::json(std::ifstream("test.json"));
     a["obj"]["obj"]["hello"] = "hello";
     // a.get<char>();
     std::string& lp = a["obj"]["obj"]["hello"].get<std::string>();
